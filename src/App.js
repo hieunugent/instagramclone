@@ -6,6 +6,7 @@ import { db } from "./firebase";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Input, Modal } from "@material-ui/core";
 import { auth } from "./firebase";
+import ImageUpload from "./ImageUpload";
 
 function getModalStyle() {
   const top = 50;
@@ -64,7 +65,7 @@ function App() {
   useEffect(() => {
     // it where the code run
 
-    db.collection("posts").onSnapshot((snapshot) => {
+    db.collection("posts").orderBy('timestamp','desc').onSnapshot((snapshot) => {
       setPosts(snapshot.docs.map((doc) => ({ id: doc.id, post: doc.data() })));
     });
   }, []);
@@ -87,6 +88,8 @@ function App() {
 
     setOpenSignIn(false);
  }
+
+
   return (
     <div className="app">
       <Modal open={openSignin} onClose={() => setOpenSignIn(false)}>
@@ -100,7 +103,6 @@ function App() {
               />
             </center>
 
-          
             <Input
               placeholder="email"
               type="email"
@@ -166,14 +168,15 @@ function App() {
           alt=""
         />
       </div>
-     
+
       {user ? (
         <Button onClick={() => auth.signOut()}>logOut</Button>
       ) : (
         <>
-        <Button onClick={() => setOpenSignIn(true)}>Sign In</Button>
+          <Button onClick={() => setOpenSignIn(true)}>Sign In</Button>
 
-        <Button onClick={() => setopenRegister(true)}>Sign Up</Button></>
+          <Button onClick={() => setopenRegister(true)}>Sign Up</Button>
+        </>
       )}
 
       <h1> Instagram clone</h1>
@@ -189,6 +192,11 @@ function App() {
       ))}
 
       {/* Posts */}
+      {user?.displayName ? (
+        <ImageUpload username={user.displayName} />
+      ) : (
+        <h3>You need to login to upload </h3>
+      )}
     </div>
   );
 }
