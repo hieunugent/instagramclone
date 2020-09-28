@@ -7,7 +7,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Button, Input, Modal } from "@material-ui/core";
 import { auth } from "./firebase";
 import ImageUpload from "./ImageUpload";
-
+import InstagramEmbed from "react-instagram-embed";
 function getModalStyle() {
   const top = 50;
   const left = 50;
@@ -167,31 +167,51 @@ function App() {
           src="https://www.instagram.com/static/images/web/mobile_nav_type_logo-2x.png/1b47f9d0e595.png"
           alt=""
         />
+        {user ? (
+          <Button onClick={() => auth.signOut()}>logOut</Button>
+        ) : (
+          <div className="app__loginContainer">
+            <Button onClick={() => setOpenSignIn(true)}>Sign In</Button>
+
+            <Button onClick={() => setopenRegister(true)}>Sign Up</Button>
+          </div>
+        )}
       </div>
 
-      {user ? (
-        <Button onClick={() => auth.signOut()}>logOut</Button>
-      ) : (
-        <>
-          <Button onClick={() => setOpenSignIn(true)}>Sign In</Button>
+      <div className="app__posts">
+        <div className="app__postsLeft">
+          {/* Posts */}
+          {posts.map(({ id, post }) => (
+            <Post
+              key={id}
+              postId={id}
+              user={user}
+              username={post.username}
+              caption={post.caption}
+              imageUrl={post.imageUrl}
+            />
+          ))}
 
-          <Button onClick={() => setopenRegister(true)}>Sign Up</Button>
-        </>
-      )}
+          {/* Posts */}
+        </div>
+        <div className="app__postsRight">
+          {/* React instagram embed */}
 
-      <h1> Instagram clone</h1>
+          <InstagramEmbed
+            url="https://www.instagram.com/p/CFmVYmNnUaz/"
+            maxWidth={320}
+            hideCaption={false}
+            containerTagName="div"
+            protocol=""
+            injectScript
+            onLoading={() => {}}
+            onSuccess={() => {}}
+            onAfterRender={() => {}}
+            onFailure={() => {}}
+          />
+        </div>
+      </div>
 
-      {/* Posts */}
-      {posts.map(({ id, post }) => (
-        <Post
-          key={id}
-          username={post.username}
-          caption={post.caption}
-          imageUrl={post.imageUrl}
-        />
-      ))}
-
-      {/* Posts */}
       {user?.displayName ? (
         <ImageUpload username={user.displayName} />
       ) : (

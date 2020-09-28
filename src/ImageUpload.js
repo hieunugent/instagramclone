@@ -5,7 +5,7 @@ import firebase from "firebase";
 import "./ImageUpload.css";
 function ImageUpload({username}) {
      const [image, setImage] = useState(null);
-     const [url, setUrl] = useState("");
+     const [ url, setUrl] = useState("");
      const [progress, setProgress] = useState(0);
      const [caption, setCaption] = useState('');
 
@@ -35,7 +35,8 @@ function ImageUpload({username}) {
                  .ref("images")
                  .child(image.name)
                  .getDownloadURL()
-                 .then(url => {
+                 .then((url) => {
+                     setUrl(url);
                      // post image inside database
                      db.collection("posts").add({
                         imageUrl: url,
@@ -58,7 +59,7 @@ function ImageUpload({username}) {
         {/* capptions input */}
         {/* file picker */}
         {/* post button */}
-        <progress value={progress} max="100"/>
+        <progress className="imageUpload__progress" value={progress} max="100"/>
         <input type ="text" placeholder='Enter a Caption' onChange={(e)=> setCaption(e.target.value)} value={caption}/>
         <input type="file" onChange={handleChange}/>
         <Button onClick={handleUpload}>
